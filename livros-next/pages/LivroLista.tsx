@@ -63,13 +63,19 @@ const LivroLista: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                    {livros.map((livro) => (
-                        <LinhaLivro 
-                            key={livro.codigo}
-                            livro={livro}
-                            excluir={() => excluirLivro(livro.codigo)}
-                        />
-                    ))}        
+                    {Array.isArray(livros) && livros.length > 0 ? (
+                            livros.map((livro, index) => (
+                                <LinhaLivro
+                                    livro={livro}
+                                    excluir={() => excluirLivro(livro.codigo).then(() => setCarregado(false))}
+                                    key={index}
+                                />
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={5}>Nenhum livro encontrado.</td>
+                            </tr>
+                        )}      
                     </tbody>
                 </table>
             </main>

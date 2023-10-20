@@ -24,22 +24,26 @@ function LinhaLivro(props) {
 };
 
 export default function LivroLista() {
-
+  const controleLivro = new ControleLivros();
   const [livros, setLivros] = useState([]);
   const [carregado, setCarregado] = useState(false);
 
-  const controleLivro = new ControleLivros();
+  
   const controleEditora = new ControleEditora();
 
   useEffect(() => {
+    const controleLivro = new ControleLivros();
     const carregarLivros = async () => {
-      const livrosCarregados = controleLivro.obterLivros();
+      const livrosCarregados = await controleLivro.obterLivros();
       setLivros(livrosCarregados);
       setCarregado(true);
     };
 
-    carregarLivros();
-  }, [controleLivro]);
+    if (!carregado) {
+      carregarLivros();
+    }
+    
+  }, [carregado]);
 
   const excluir = (codigo) => {
       controleLivro.excluir(codigo);
@@ -60,14 +64,21 @@ export default function LivroLista() {
           </tr>
         </thead>
         <tbody className="text-start">
-          {carregado && livros.map((livro) => (
-            <LinhaLivro
-            key={livro.codigo}
-            livro={livro}
-            excluir={excluir}
-            controleEditora={controleEditora}
-            />
-          ))}
+        {Array.isArray(livros) && livros.length > 
+          0 ? (
+            carregado && livros.map((livro, index) => (
+              <LinhaLivro
+                key={index}
+                livro={livro}
+                excluir={excluir}
+                controleEditora={controleEditora}
+              />
+            ))
+          ) : (
+            <tr>
+              <td colSpan={5}>Nenhum livro encontrado.</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </main>
